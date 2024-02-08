@@ -9,7 +9,7 @@ CFLAGS		+= -Wextra
 CFLAGS		+= -Werror
 CFLAGS		+= -pedantic
 CFLAGS		+= -pedantic-errors
-CFLAGS		+= -std=c90
+CFLAGS		+= -std=c99
 
 CPPFLAGS	:=
 CPPFLAGS	+= -MD
@@ -19,14 +19,16 @@ LDFLAGS		+= -L .
 LDFLAGS		+= -Wl,--build-id=0x$(shell git rev-parse HEAD)
 
 OBJS		:=
-OBJS		+= main.o
 OBJS		+= csr.o
 OBJS		+= core.o
+OBJS            += btree.o
+OBJS            += ins.o
+OBJS		+= main.o
 
 .DEFAULT_GOAL	:= $(bin)
 
 $(bin): $(OBJS)
-	$(CC) $(LDFLAGS) $? -o $@
+	$(CC) $(LDFLAGS) $^ -o $@
 
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
