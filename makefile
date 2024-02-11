@@ -1,12 +1,18 @@
 bin		:= vrv
 
+VPATH		:=
+VPATH		+= .
+VPATH		+= ext
+VPATH		+= cmn
+
 CC		:= clang
 
 CFLAGS		:=
-CFLAGS		+= -I .
+CFLAGS		+= $(foreach p,$(VPATH),-I $(p))
 CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
 CFLAGS		+= -Werror
+CFLAGS		+= -Wno-gnu-statement-expression
 CFLAGS		+= -pedantic
 CFLAGS		+= -pedantic-errors
 CFLAGS		+= -std=c99
@@ -15,7 +21,7 @@ CPPFLAGS	:=
 CPPFLAGS	+= -MD
 
 LDFLAGS		:=
-LDFLAGS		+= -L .
+LDLAGS		+= $(foreach p,$(VPATH),-I $(p))
 LDFLAGS		+= -Wl,--build-id=0x$(shell git rev-parse HEAD)
 
 OBJS		:=
@@ -24,6 +30,8 @@ OBJS		+= core.o
 OBJS            += btree.o
 OBJS            += ins.o
 OBJS		+= main.o
+
+OBJS		+= i32.o
 
 .DEFAULT_GOAL	:= $(bin)
 
@@ -35,6 +43,6 @@ $(bin): $(OBJS)
 
 .PHONY: clean
 clean:
-	@rm -f *.d *.o $(bin)
+	@rm -f $(bin) $(foreach p,$(VPATH),$(p)/*.o $(p)/*.d)
 
-include $(wildcard *.d)
+include $(wildcard $(foreach p,$(VPATH),$(p)/*.d))
