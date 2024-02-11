@@ -22,9 +22,9 @@ struct btr {
  * @val: node value used as key
  */
 struct btn {
-     struct btn *bn_le;
-     struct btn *bn_ri;
-     uint8_t     bn_val;
+     struct btn    *bn_le;
+     struct btn    *bn_ri;
+     const uint8_t  bn_val;
 };
 
 void        add_btn(struct btr *, struct btn *);
