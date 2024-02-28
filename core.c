@@ -24,7 +24,11 @@ static struct ins *pipe_idec(uint32_t *op)
      return insn;
 }
 
-static inline void pipe_pdec(struct ins *i, struct core *c, const uint32_t op)
+/**
+ * Calls parameter decoding function that
+ * must call the respective exec function.
+ */
+static inline void pipe_pdec_exec(struct ins *i, struct core *c, const uint32_t op)
 {
      i->i_pdec(c, op);
 }
@@ -32,7 +36,7 @@ static inline void pipe_pdec(struct ins *i, struct core *c, const uint32_t op)
 void core_work(struct core *c)
 {
      struct ins *insn = NULL;
-     uint32_t op = 0;
+     uint32_t    op   = 0;
 
      while (1) {
 	  /* TODO: fetch (need a fetchable mem region) */
@@ -41,7 +45,7 @@ void core_work(struct core *c)
 	       printf("idec fail\n");
 	       continue;
 	  }
-	  pipe_pdec(insn, c, op);
+	  pipe_pdec_exec(insn, c, op);
      }
 }
 
