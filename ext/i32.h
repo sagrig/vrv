@@ -3,7 +3,10 @@
 
 #include "ins.h"
 
-#define I32NUM 1
+#define I32NUM (1)
+
+#define ISH32_MASK (0x1F)
+#define IOP_MASK   (0x400)
 
 struct opi_ex {
      struct btn   opi_btn;

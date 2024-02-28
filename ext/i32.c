@@ -6,9 +6,61 @@
 #include "ins.h"
 #include "help.h"
 
+static void andi(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     *rd = (rs1 & imm);
+}
+
+static void ori(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     *rd = (rs1 | imm);
+}
+
+static void xori(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     *rd = (rs1 ^ imm);
+}
+
+static void srai(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     const int32_t srs1 = rs1;
+     const uint8_t sh   = (imm & ISH32_MASK);
+     *rd                = (int32_t)(srs1 >> sh);
+}
+
+static void srli(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     const uint8_t sh = (imm & ISH32_MASK);
+     *rd              = (rs1 >> sh);
+}
+
+static void srxi(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     if (imm & IOP_MASK)
+	  srai(rs1, imm, rd);
+     else
+	  srli(rs1, imm, rd);
+}
+
+static void sltiu(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     *rd = (rs1 < imm);
+}
+
+static void slti(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     *rd = ((int32_t)rs1 < (int32_t)imm);
+}
+
+static void slli(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
+{
+     const uint8_t sh = (imm & ISH32_MASK);
+     *rd              = (rs1 << sh);
+}
+
 static void addi(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
 {
-     *rd = (rs1 + imm);
+     *rd = (rs1 + (int16_t)imm);
 }
 
 static int8_t opi_pdec(struct core *c, uint32_t op)
@@ -46,6 +98,34 @@ struct opi_ex opie[IT_F3_MAX] = {
      {
 	  .opi_btn.bn_val = 0,
 	  .opi_exec       = addi,
+     },
+     {
+	  .opi_btn.bn_val = 1,
+	  .opi_exec       = slli,
+     },
+     {
+	  .opi_btn.bn_val = 2,
+	  .opi_exec       = slti,
+     },
+     {
+	  .opi_btn.bn_val = 3,
+	  .opi_exec       = sltiu,
+     },
+     {
+	  .opi_btn.bn_val = 4,
+	  .opi_exec       = xori,
+     },
+     {
+	  .opi_btn.bn_val = 5,
+	  .opi_exec       = srxi,
+     },
+     {
+	  .opi_btn.bn_val = 6,
+	  .opi_exec       = ori,
+     },
+     {
+	  .opi_btn.bn_val = 7,
+	  .opi_exec       = andi,
      },
 };
 
