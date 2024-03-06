@@ -16,6 +16,7 @@ CFLAGS		+= -Wno-gnu-statement-expression
 CFLAGS		+= -pedantic
 CFLAGS		+= -pedantic-errors
 CFLAGS		+= -std=c99
+CFLAGS		+= -O2
 
 CPPFLAGS	:=
 CPPFLAGS	+= -MD
@@ -30,8 +31,8 @@ OBJS		+= core.o
 OBJS            += btree.o
 OBJS            += ins.o
 OBJS		+= main.o
-
 OBJS		+= i32.o
+OBJS		+= ext.o
 
 .DEFAULT_GOAL	:= $(bin)
 
