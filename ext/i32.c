@@ -2,9 +2,10 @@
 
 #include "btree.h"
 #include "core.h"
+#include "ext.h"
+#include "help.h"
 #include "i32.h"
 #include "ins.h"
-#include "help.h"
 
 static void andi(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
 {
@@ -60,7 +61,9 @@ static void slli(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
 
 static void addi(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
 {
-     *rd = (rs1 + (int16_t)imm);
+     *rd = (imm & 0x800)?
+	  (rs1 - ((imm - 1) ^ 0xfff)):
+	  (rs1 + imm);
 }
 
 static int8_t opi_pdec(struct core *c, uint32_t op)
@@ -146,3 +149,4 @@ void i32_init(void)
      for (; i < I32NUM; ++i)
 	  add_btn(&base, &i32i[i].i_btn);
 }
+ext_init(i32_init);
