@@ -1,5 +1,5 @@
-#ifndef HELP_VRV_H
-#define HELP_VRV_H
+#ifndef VRV_HELP_H
+#define VRV_HELP_H
 
 #include <stddef.h>
 
@@ -8,4 +8,4 @@
 	       ((type *)(mptr - offsetof(type, memb))); \
 	  })
 
-#endif /* HELP_VRV_H */
+#endif /* VRV_HELP_H */
