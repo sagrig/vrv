@@ -23,7 +23,7 @@ struct core {
      uint8_t     co_priv:2;
 };
 
-void         core_work(struct core *);
+void         core_work(struct core *, uint32_t);
 struct core *init_core(void);
 
 #endif /* VRV_CORE_H */
