@@ -1,0 +1,10 @@
+*
+
+!cmn/
+!ext/
+
+!*\.c
+!*\.h
+!makefile
+
+!\.gitignore
