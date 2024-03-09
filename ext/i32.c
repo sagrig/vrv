@@ -7,6 +7,51 @@
 #include "i32.h"
 #include "ins.h"
 
+#ifdef VRV_DEBUG
+static const uint32_t exp_out[8] = {
+     1,
+     2147483648,
+     0,
+     1,
+     4089,
+     0,
+     4093,
+     4,
+};
+
+bool i32_tbfn(void)
+{
+     struct core *c  = NULL;
+     uint32_t     op = 0xf9d08193;
+     uint8_t      i  = 0;
+     bool         rc = true;
+
+     c = init_core();
+     if (!c) {
+	  printf("fail to alloc core!\n");
+	  return false;
+     }
+
+     printf("RV32I test bench.\n");
+     printf("OP-IMM instructions:\n");
+     printf("Inputs:\n");
+     printf("x1(r1): +100\n");
+     printf("imm:    -99 (0xf9d)\n\n");
+
+     c->co_regs[1] = 100;
+     for (i = 0; i < 8; ++i) {
+	  printf("f3: = %u\n", i);
+	  printf("expected: x3(rd) = %u\n", exp_out[i]);
+	  op &= 0xffff8fff;
+	  op |= (i << 12);
+	  core_work(c, op);
+	  printf("actual:   x3(rd) = %u\n\n", c->co_regs[3]);
+	  rc = rc && (exp_out[i] == c->co_regs[3]);
+     }
+     return rc;
+}
+#endif /* VRV_DEBUG */
+
 static void andi(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
 {
      *rd = (rs1 & imm);
@@ -148,5 +193,7 @@ void i32_init(void)
 
      for (; i < I32NUM; ++i)
 	  add_btn(&base, &i32i[i].i_btn);
+
+     i32_tb_reg();
 }
 ext_init(i32_init);

@@ -13,7 +13,7 @@ extern ext_t *__start_ext;
 extern ext_t *__stop_ext;
 
 #define ext_init(fn)				\
-     ext_t __ext_init_##fn __used __ext = fn
+     static ext_t __ext_init_##fn __used __ext = fn
 
 void init_exts(void);
 
