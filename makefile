@@ -1,9 +1,14 @@
 bin		:= vrv
+bintb           := vrvtb
+
+# DEBUG
+D		?=
 
 VPATH		:=
 VPATH		+= .
 VPATH		+= ext
 VPATH		+= cmn
+VPATH		+= test
 
 CC		:= clang
 
@@ -17,6 +22,9 @@ CFLAGS		+= -pedantic
 CFLAGS		+= -pedantic-errors
 CFLAGS		+= -std=c99
 CFLAGS		+= -O2
+ifeq (1,$(D))
+CFLAGS		+= -DVRV_DEBUG
+endif
 
 CPPFLAGS	:=
 CPPFLAGS	+= -MD
@@ -30,20 +38,34 @@ OBJS		+= csr.o
 OBJS		+= core.o
 OBJS            += btree.o
 OBJS            += ins.o
-OBJS		+= main.o
 OBJS		+= i32.o
 OBJS		+= ext.o
 
-.DEFAULT_GOAL	:= $(bin)
+ifeq (1,$(D))
+OBJS		+= maintb.o
+else
+OBJS		+= main.o
+endif
 
-$(bin): $(OBJS)
+ifeq (1,$(D))
+.DEFAULT_GOAL	:= $(bintb)
+else
+.DEFAULT_GOAL	:= $(bin)
+endif
+
+$(bin) $(bintb): $(OBJS)
 	$(CC) $(LDFLAGS) $^ -o $@
 
-%.o: %.c
+.PHONY: .FORCE
+.FORCE:
+	@:
+
+%.o: %.c .FORCE
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
+
 
 .PHONY: clean
 clean:
-	@rm -f $(bin) $(foreach p,$(VPATH),$(p)/*.o $(p)/*.d)
+	@rm -f $(bin) $(bintb) $(foreach p,$(VPATH),$(p)/*.o $(p)/*.d)
 
 include $(wildcard $(foreach p,$(VPATH),$(p)/*.d))
