@@ -48,6 +48,15 @@ bool i32_tbfn(void)
 	  printf("actual:   x3(rd) = %u\n\n", c->co_regs[3]);
 	  rc = rc && (exp_out[i] == c->co_regs[3]);
      }
+
+     printf("LUI instruction:\n");
+     printf("imm: 0xf0f0f\n\n");
+     printf("expected: x31(rd) = 0xf0f0f000\n");
+     op = 0xf0f0ffb7;
+     core_work(c, op);
+     printf("actual:   x31(rd) = 0x%8x\n", c->co_regs[31]);
+     rc = rc && (0xf0f0f000 == c->co_regs[31]);
+
      return rc;
 }
 #endif /* VRV_DEBUG */
@@ -95,7 +104,17 @@ static void sltiu(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
 
 static void slti(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
 {
-     *rd = ((int32_t)rs1 < (int32_t)imm);
+     uint8_t imms = (imm >> (IT_IMM_BITS - 1));
+     uint8_t rs1s = (rs1 >> (sizeof rs1 - 1));
+
+     if (!imms)
+	  *rd   = (!rs1s)?(rs1 < imm):(1);
+     else {
+	  int32_t im32;
+	  im32  = imm;
+	  im32 |= IT_IMM_TO32;
+	  *rd   = (!rs1s)?(0):((int32_t)rs1 < im32);
+     }
 }
 
 static void slli(const uint32_t rs1, const uint16_t imm, uint32_t *rd)
@@ -131,10 +150,25 @@ static int8_t opi_pdec(struct core *c, uint32_t op)
      return 0;
 }
 
+static int8_t lui_pdec(struct core *c, uint32_t op)
+{
+     uint32_t *rd  = GET_RD(c, op);
+     uint32_t  imm = UTYPE_IMM_NOSH(op);
+
+     *rd ^= *rd;
+     *rd |= (imm << OP_BITS);
+
+     return 0;
+}
+
 struct ins i32i[I32NUM] = {
      {
 	  .i_btn.bn_val = 4,
 	  .i_pdec       = opi_pdec,
+     },
+     {
+	  .i_btn.bn_val = 13,
+	  .i_pdec       = lui_pdec,
      },
 };
 

@@ -3,7 +3,7 @@
 
 #include "ins.h"
 
-#define I32NUM (1)
+#define I32NUM (2)
 
 #define ISH32_MASK (0x1F)
 #define IOP_MASK   (0x400)
