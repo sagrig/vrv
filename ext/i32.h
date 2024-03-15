@@ -3,7 +3,7 @@
 
 #include "ins.h"
 
-#define I32NUM (2)
+#define I32NUM (5)
 
 #define ISH32_MASK (0x1F)
 #define IOP_MASK   (0x400)
@@ -34,6 +34,6 @@ inline void i32_tb_reg(void)
 
 extern struct btr    opi;
 extern struct ins    i32i[I32NUM];
-extern struct opi_ex opie[IT_F3_MAX];
+extern struct opi_ex opie[ITF3_MAX];
 
 #endif /* VRV_I32_H */
